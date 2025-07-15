@@ -12,6 +12,6 @@ phases:
       - pnpm run build:prod
 
 artifacts:
+  base-directory: dist-prod
   files:
     - '**/*'
-  base-directory: dist
