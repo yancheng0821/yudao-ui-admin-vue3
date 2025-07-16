@@ -15,3 +15,7 @@ artifacts:
   base-directory: dist-prod
   files:
     - '**/*'
+
+post_build:
+  commands:
+    - aws cloudfront create-invalidation --distribution-id E3ARHNK1RPNYMO --paths "/index.html"
