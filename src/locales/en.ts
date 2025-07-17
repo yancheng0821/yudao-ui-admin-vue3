@@ -54,7 +54,8 @@ export default {
     updateTime: 'Update Time',
     copy: 'Copy',
     copySuccess: 'Copy Success',
-    copyError: 'Copy Error'
+    copyError: 'Copy Error',
+    confirm: 'Confirm'
   },
   lock: {
     lockScreen: 'Lock screen',
@@ -141,9 +142,9 @@ export default {
     qrcode: 'Scan the QR code to log in',
     btnRegister: 'Sign up',
     SmsSendMsg: 'code has been sent',
-    resetPassword: "Reset Password",
-    resetPasswordSuccess: "Reset Password Success",
-    invalidTenantName:"Invalid Tenant Name"
+    resetPassword: 'Reset Password',
+    resetPasswordSuccess: 'Reset Password Success',
+    invalidTenantName: 'Invalid Tenant Name'
   },
   captcha: {
     verification: 'Please complete security verification',
@@ -456,5 +457,68 @@ export default {
     btn_zoom_in: 'Zoom in',
     btn_zoom_out: 'Zoom out',
     preview: 'Preivew'
+  },
+  tenant: {
+    name: 'Tenant Name',
+    package: 'Tenant Package',
+    contactName: 'Contact Name',
+    contactMobile: 'Contact Mobile',
+    username: 'Username',
+    password: 'Password',
+    accountCount: 'Account Quota',
+    expireTime: 'Expire Time',
+    website: 'Bind Domain',
+    status: 'Tenant Status',
+    create: 'Create',
+    edit: 'Edit',
+    delete: 'Delete',
+    search: 'Search',
+    reset: 'Reset',
+    export: 'Export',
+    batchDelete: 'Batch Delete',
+    systemTenant: 'System Tenant',
+    actions: 'Actions',
+    tenantList: 'Tenant List',
+    tenantFormTitleCreate: 'Create Tenant',
+    tenantFormTitleEdit: 'Edit Tenant',
+    pleaseInput: 'Please input',
+    pleaseSelect: 'Please select',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    createTime: 'Create Time',
+    operation: 'Operation'
+  },
+  tenantPackage: {
+    id: 'Package ID',
+    name: 'Package Name',
+    status: 'Status',
+    remark: 'Remark',
+    createTime: 'Create Time',
+    actions: 'Actions',
+    edit: 'Edit',
+    delete: 'Delete',
+    search: 'Search',
+    reset: 'Reset',
+    create: 'Create',
+    batchDelete: 'Batch Delete',
+    pleaseInput: 'Please input',
+    pleaseSelect: 'Please select',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    menuPerms: 'Menu Permissions',
+    selectAll: 'Select All/None',
+    expandAll: 'Expand/Collapse All',
+    expand: 'Expand',
+    collapse: 'Collapse',
+    loading: 'Loading, please wait...'
+  },
+  menu: {
+    tenant: 'Tenant Management',
+    tenantList: 'Tenant List',
+    tenantPackage: 'Tenant Package'
+  },
+  commonStatus: {
+    0: 'Enabled',
+    1: 'Disabled'
   }
 }

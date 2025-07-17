@@ -7,25 +7,28 @@
       :rules="formRules"
       label-width="80px"
     >
-      <el-form-item label="套餐名" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入套餐名" />
+      <el-form-item :label="t('tenantPackage.name')" prop="name">
+        <el-input
+          v-model="formData.name"
+          :placeholder="t('tenantPackage.pleaseInput') + t('tenantPackage.name')"
+        />
       </el-form-item>
-      <el-form-item label="菜单权限">
+      <el-form-item :label="t('tenantPackage.menuPerms')">
         <el-card class="w-full h-400px !overflow-y-scroll" shadow="never">
           <template #header>
-            全选/全不选:
+            {{ t('tenantPackage.selectAll') }}:
             <el-switch
               v-model="treeNodeAll"
-              active-text="是"
-              inactive-text="否"
+              :active-text="t('common.yes')"
+              :inactive-text="t('common.no')"
               inline-prompt
               @change="handleCheckedTreeNodeAll"
             />
-            全部展开/折叠:
+            {{ t('tenantPackage.expandAll') }}:
             <el-switch
               v-model="menuExpand"
-              active-text="展开"
-              inactive-text="折叠"
+              :active-text="t('tenantPackage.expand')"
+              :inactive-text="t('tenantPackage.collapse')"
               inline-prompt
               @change="handleCheckedTreeExpand"
             />
@@ -34,30 +37,35 @@
             ref="treeRef"
             :data="menuOptions"
             :props="defaultProps"
-            empty-text="加载中，请稍候"
+            :empty-text="t('tenantPackage.loading')"
             node-key="id"
             show-checkbox
           />
         </el-card>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('tenantPackage.status')" prop="status">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ t('commonStatus.' + dict.value) }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="formData.remark" placeholder="请输入备注" />
+      <el-form-item :label="t('tenantPackage.remark')" prop="remark">
+        <el-input
+          v-model="formData.remark"
+          :placeholder="t('tenantPackage.pleaseInput') + t('tenantPackage.remark')"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>

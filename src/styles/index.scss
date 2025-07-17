@@ -17,6 +17,12 @@
   display: flex;
   justify-content: flex-start;
 }
+// 解决表单label过长时，超出表单宽度的问题
+html[lang='en'] .el-form-item__label {
+  white-space: normal;
+  line-height: 1.2;
+  padding-top: 6px;
+}
 
 /* nprogress 适配 element-plus 的主题色 */
 #nprogress {

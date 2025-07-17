@@ -54,7 +54,8 @@ export default {
     updateTime: '更新时间',
     copy: '复制',
     copySuccess: '复制成功',
-    copyError: '复制失败'
+    copyError: '复制失败',
+    confirm: '确定'
   },
   lock: {
     lockScreen: '锁定屏幕',
@@ -452,5 +453,68 @@ export default {
     btn_zoom_out: '缩小',
     preview: '预览'
   },
-  'OAuth 2.0': 'OAuth 2.0' // 避免菜单名是 OAuth 2.0 时，一直 warn 报错
+  'OAuth 2.0': 'OAuth 2.0', // 避免菜单名是 OAuth 2.0 时，一直 warn 报错
+  tenant: {
+    name: '租户名称',
+    package: '租户套餐',
+    contactName: '联系人',
+    contactMobile: '联系电话',
+    username: '用户名',
+    password: '密码',
+    accountCount: '账号额度',
+    expireTime: '到期时间',
+    website: '绑定域名',
+    status: '租户状态',
+    create: '新增',
+    edit: '编辑',
+    delete: '删除',
+    search: '搜索',
+    reset: '重置',
+    export: '导出',
+    batchDelete: '批量删除',
+    systemTenant: '系统租户',
+    actions: '操作',
+    tenantList: '租户列表',
+    tenantFormTitleCreate: '新增租户',
+    tenantFormTitleEdit: '编辑租户',
+    pleaseInput: '请输入',
+    pleaseSelect: '请选择',
+    startDate: '开始日期',
+    endDate: '结束日期',
+    createTime: '创建时间',
+    operation: '操作'
+  },
+  tenantPackage: {
+    id: '套餐编号',
+    name: '套餐名',
+    status: '状态',
+    remark: '备注',
+    createTime: '创建时间',
+    actions: '操作',
+    edit: '修改',
+    delete: '删除',
+    search: '搜索',
+    reset: '重置',
+    create: '新增',
+    batchDelete: '批量删除',
+    pleaseInput: '请输入',
+    pleaseSelect: '请选择',
+    startDate: '开始日期',
+    endDate: '结束日期',
+    menuPerms: '菜单权限',
+    selectAll: '全选/全不选',
+    expandAll: '全部展开/折叠',
+    expand: '展开',
+    collapse: '折叠',
+    loading: '加载中，请稍候...'
+  },
+  menu: {
+    tenant: '租户管理',
+    tenantList: '租户列表',
+    tenantPackage: '租户套餐'
+  },
+  commonStatus: {
+    0: '开启',
+    1: '关闭'
+  }
 }
