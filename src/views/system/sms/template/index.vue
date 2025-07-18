@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="短信配置" url="https://doc.iocoder.cn/sms/" />
+  <doc-alert :title="t('sms.templateTitle')" url="https://doc.iocoder.cn/sms/" />
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -10,10 +10,10 @@
       :inline="true"
       label-width="150px"
     >
-      <el-form-item label="短信类型" prop="type">
+      <el-form-item :label="t('sms.templateType')" prop="type">
         <el-select
           v-model="queryParams.type"
-          placeholder="请选择短信类型"
+          :placeholder="t('sms.pleaseSelectTemplateType')"
           clearable
           class="!w-240px"
         >
@@ -25,10 +25,10 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="开启状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-select
           v-model="queryParams.status"
-          placeholder="请选择开启状态"
+          :placeholder="t('sms.pleaseSelectStatus')"
           clearable
           class="!w-240px"
         >
@@ -40,28 +40,28 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="模板编码" prop="code">
+      <el-form-item :label="t('sms.templateCode')" prop="code">
         <el-input
           v-model="queryParams.code"
-          placeholder="请输入模板编码"
+          :placeholder="t('sms.pleaseInputTemplateCode')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="短信 API 的模板编号" prop="apiTemplateId">
+      <el-form-item :label="t('sms.apiTemplateId')" prop="apiTemplateId">
         <el-input
           v-model="queryParams.apiTemplateId"
-          placeholder="请输入短信 API 的模板编号"
+          :placeholder="t('sms.pleaseInputApiTemplateId')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="短信渠道" prop="channelId">
+      <el-form-item :label="t('sms.channelId')" prop="channelId">
         <el-select
           v-model="queryParams.channelId"
-          placeholder="请选择短信渠道"
+          :placeholder="t('sms.pleaseSelectChannel')"
           clearable
           class="!w-240px"
         >
@@ -76,45 +76,49 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item :label="t('common.createTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
-          style="width: 240px"
-          type="daterange"
           value-format="YYYY-MM-DD HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          type="daterange"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
+          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
-          type="primary"
           plain
+          type="primary"
           @click="openForm('create')"
           v-hasPermi="['system:sms-template:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" />新增
+          <Icon icon="ep:plus" class="mr-5px" /> {{ t('common.create') }}
         </el-button>
         <el-button
-          type="danger"
           plain
+          type="danger"
           :disabled="checkedIds.length === 0"
           @click="handleDeleteBatch"
           v-hasPermi="['system:sms-template:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" />批量删除
+          <Icon icon="ep:delete" class="mr-5px" /> {{ t('common.batchDelete') }}
         </el-button>
         <el-button
-          type="success"
           plain
+          type="info"
           @click="handleExport"
           :loading="exportLoading"
           v-hasPermi="['system:sms-template:export']"
         >
-          <Icon icon="ep:download" class="mr-5px" /> 导出
+          <Icon icon="ep:download" class="mr-5px" /> {{ t('common.export') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -122,63 +126,56 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
+    <el-table
+      v-loading="loading"
+      :data="list"
+      @selection-change="handleRowCheckboxChange"
+      :show-overflow-tooltip="true"
+      :stripe="true"
+    >
       <el-table-column type="selection" width="55" />
-      <el-table-column
-        label="模板编码"
-        align="center"
-        prop="code"
-        width="120"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="模板名称"
-        align="center"
-        prop="name"
-        width="120"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="模板内容"
-        align="center"
-        prop="content"
-        width="200"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column label="短信类型" align="center" prop="type">
+      <el-table-column :label="t('sms.templateType')" align="center" prop="type" width="90">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_SMS_TEMPLATE_TYPE" :value="scope.row.type" />
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status" width="80">
+      <el-table-column :label="t('common.status')" align="center" prop="status" width="80">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column :label="t('sms.templateCode')" align="center" prop="code" width="120" />
+      <el-table-column :label="t('sms.templateName')" align="center" prop="name" width="120" />
       <el-table-column
-        label="短信 API 的模板编号"
+        :label="t('sms.templateContent')"
+        align="center"
+        prop="content"
+        width="200"
+      />
+      <el-table-column
+        :label="t('sms.apiTemplateId')"
         align="center"
         prop="apiTemplateId"
-        width="200"
-        :show-overflow-tooltip="true"
+        width="120"
       />
-      <el-table-column label="短信渠道" align="center" width="120">
+      <el-table-column :label="t('sms.channelName')" align="center" prop="channelId" width="120">
         <template #default="scope">
-          <div>
-            {{ channelList.find((channel) => channel.id === scope.row.channelId)?.signature }}
-          </div>
-          <dict-tag :type="DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE" :value="scope.row.channelCode" />
+          <span v-for="channel in channelList" :key="channel.id">
+            <span v-if="channel.id === scope.row.channelId">
+              {{ channel.signature }}
+              【{{ getDictLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code) }}】
+            </span>
+          </span>
         </template>
       </el-table-column>
       <el-table-column
-        label="创建时间"
+        :label="t('common.createTime')"
         align="center"
         prop="createTime"
         width="180"
         :formatter="dateFormatter"
       />
-      <el-table-column label="操作" align="center" width="210" fixed="right">
+      <el-table-column :label="t('common.action')" align="center" width="210" fixed="right">
         <template #default="scope">
           <el-button
             link
@@ -186,7 +183,7 @@
             @click="openForm('update', scope.row.id)"
             v-hasPermi="['system:sms-template:update']"
           >
-            修改
+            {{ t('common.edit') }}
           </el-button>
           <el-button
             link
@@ -194,7 +191,7 @@
             @click="openSendForm(scope.row.id)"
             v-hasPermi="['system:sms-template:send-sms']"
           >
-            测试
+            {{ t('sms.test') }}
           </el-button>
           <el-button
             link
@@ -202,7 +199,7 @@
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['system:sms-template:delete']"
           >
-            删除
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -328,7 +325,7 @@ const handleExport = async () => {
     // 发起导出
     exportLoading.value = true
     const data = await SmsTemplateApi.exportSmsTemplate(queryParams)
-    download.excel(data, '短信模板.xls')
+    download.excel(data, t('sms.templateExportFileName'))
   } catch {
   } finally {
     exportLoading.value = false

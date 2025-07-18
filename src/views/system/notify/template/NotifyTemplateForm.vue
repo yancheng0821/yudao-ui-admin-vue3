@@ -7,20 +7,24 @@
       label-width="140px"
       v-loading="formLoading"
     >
-      <el-form-item label="模版编码" prop="code">
-        <el-input v-model="formData.code" placeholder="请输入模版编码" />
+      <el-form-item :label="t('notify.templateCode')" prop="code">
+        <el-input v-model="formData.code" :placeholder="t('notify.pleaseInputCode')" />
       </el-form-item>
-      <el-form-item label="模板名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入模版名称" />
+      <el-form-item :label="t('notify.templateName')" prop="name">
+        <el-input v-model="formData.name" :placeholder="t('notify.pleaseInputName')" />
       </el-form-item>
-      <el-form-item label="发件人名称" prop="nickname">
-        <el-input v-model="formData.nickname" placeholder="请输入发件人名称" />
+      <el-form-item :label="t('notify.senderName')" prop="nickname">
+        <el-input v-model="formData.nickname" :placeholder="t('notify.pleaseInputSenderName')" />
       </el-form-item>
-      <el-form-item label="模板内容" prop="content">
-        <el-input type="textarea" v-model="formData.content" placeholder="请输入模板内容" />
+      <el-form-item :label="t('notify.templateContent')" prop="content">
+        <el-input
+          type="textarea"
+          v-model="formData.content"
+          :placeholder="t('notify.pleaseInputContent')"
+        />
       </el-form-item>
-      <el-form-item label="类型" prop="type">
-        <el-select v-model="formData.type" placeholder="请选择类型">
+      <el-form-item :label="t('notify.type')" prop="type">
+        <el-select v-model="formData.type" :placeholder="t('notify.pleaseSelectType')">
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_NOTIFY_TEMPLATE_TYPE)"
             :key="dict.value"
@@ -29,7 +33,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="开启状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -40,13 +44,15 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="formData.remark" placeholder="请输入备注" />
+      <el-form-item :label="t('common.remark')" prop="remark">
+        <el-input v-model="formData.remark" :placeholder="t('common.pleaseInputRemark')" />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="formLoading">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -55,6 +61,7 @@ import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import * as NotifyTemplateApi from '@/api/system/notify/template'
 import { CommonStatusEnum } from '@/utils/constants'
 const message = useMessage() // 消息弹窗
+const { t } = useI18n() // 国际化
 
 const dialogVisible = ref(false) // 弹窗的是否展示
 const dialogTitle = ref('') // 弹窗的标题
@@ -72,12 +79,12 @@ const formData = ref<NotifyTemplateApi.NotifyTemplateVO>({
   remark: ''
 })
 const formRules = reactive({
-  type: [{ required: true, message: '消息类型不能为空', trigger: 'change' }],
-  status: [{ required: true, message: '开启状态不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '模板编码不能为空', trigger: 'blur' }],
-  name: [{ required: true, message: '模板名称不能为空', trigger: 'blur' }],
-  nickname: [{ required: true, message: '发件人姓名不能为空', trigger: 'blur' }],
-  content: [{ required: true, message: '模板内容不能为空', trigger: 'blur' }]
+  type: [{ required: true, message: t('notify.typeRequired'), trigger: 'change' }],
+  status: [{ required: true, message: t('notify.statusRequired'), trigger: 'blur' }],
+  code: [{ required: true, message: t('notify.codeRequired'), trigger: 'blur' }],
+  name: [{ required: true, message: t('notify.nameRequired'), trigger: 'blur' }],
+  nickname: [{ required: true, message: t('notify.nicknameRequired'), trigger: 'blur' }],
+  content: [{ required: true, message: t('notify.contentRequired'), trigger: 'blur' }]
 })
 const formRef = ref() // 表单 Ref
 

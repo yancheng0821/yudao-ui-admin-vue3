@@ -2,8 +2,10 @@
   <Dialog v-model="dialogVisible" :title="dialogTitle">
     <Form ref="formRef" v-loading="formLoading" :rules="rules" :schema="allSchemas.formSchema" />
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>

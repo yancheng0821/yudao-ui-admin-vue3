@@ -1,6 +1,11 @@
 <template>
   <div class="head-container">
-    <el-input v-model="deptName" class="mb-20px" clearable placeholder="请输入部门名称">
+    <el-input
+      v-model="deptName"
+      class="mb-20px"
+      clearable
+      :placeholder="t('user.pleaseInputDeptName')"
+    >
       <template #prefix>
         <Icon icon="ep:search" />
       </template>
@@ -27,6 +32,8 @@ import * as DeptApi from '@/api/system/dept'
 import { defaultProps, handleTree } from '@/utils/tree'
 
 defineOptions({ name: 'SystemUserDeptTree' })
+
+const { t } = useI18n() // 国际化
 
 const deptName = ref('')
 const deptList = ref<Tree[]>([]) // 树形结构

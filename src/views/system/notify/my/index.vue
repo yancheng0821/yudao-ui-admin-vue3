@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="站内信配置" url="https://doc.iocoder.cn/notify/" />
+  <doc-alert :title="t('notify.myNotifyTitle')" url="https://doc.iocoder.cn/notify/" />
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -10,10 +10,10 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="是否已读" prop="readStatus">
+      <el-form-item :label="t('notify.readStatus')" prop="readStatus">
         <el-select
           v-model="queryParams.readStatus"
-          placeholder="请选择状态"
+          :placeholder="t('notify.pleaseSelectStatus')"
           clearable
           class="!w-240px"
         >
@@ -25,25 +25,29 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="发送时间" prop="createTime">
+      <el-form-item :label="t('notify.sendTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button @click="handleUpdateList">
-          <Icon icon="ep:reading" class="mr-5px" /> 标记已读
+          <Icon icon="ep:reading" class="mr-5px" /> {{ t('notify.markAsRead') }}
         </el-button>
         <el-button @click="handleUpdateAll">
-          <Icon icon="ep:reading" class="mr-5px" /> 全部已读
+          <Icon icon="ep:reading" class="mr-5px" /> {{ t('notify.markAllAsRead') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -124,6 +128,7 @@ import MyNotifyMessageDetail from './MyNotifyMessageDetail.vue'
 defineOptions({ name: 'SystemMyNotify' })
 
 const message = useMessage() // 消息
+const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
@@ -181,7 +186,7 @@ const handleReadOne = async (id) => {
 /** 标记全部站内信已读 **/
 const handleUpdateAll = async () => {
   await NotifyMessageApi.updateAllNotifyMessageRead()
-  message.success('全部已读成功！')
+  message.success(t('notify.markAllAsReadSuccess'))
   tableRef.value.clearSelection()
   await getList()
 }
@@ -192,7 +197,7 @@ const handleUpdateList = async () => {
     return
   }
   await NotifyMessageApi.updateNotifyMessageRead(selectedIds.value)
-  message.success('批量已读成功！')
+  message.success(t('notify.batchReadSuccess'))
   tableRef.value.clearSelection()
   await getList()
 }

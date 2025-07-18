@@ -1,18 +1,18 @@
 <template>
-  <Dialog v-model="dialogVisible" title="数据权限" width="800">
+  <Dialog v-model="dialogVisible" :title="t('role.dataPermission')" width="800">
     <el-form ref="formRef" v-loading="formLoading" :model="formData" label-width="80px">
-      <el-form-item label="角色名称">
+      <el-form-item :label="t('role.name')">
         <el-tag>{{ formData.name }}</el-tag>
       </el-form-item>
-      <el-form-item label="角色标识">
+      <el-form-item :label="t('role.code')">
         <el-tag>{{ formData.code }}</el-tag>
       </el-form-item>
-      <el-form-item label="权限范围">
+      <el-form-item :label="t('role.permissionScope')">
         <el-select v-model="formData.dataScope">
           <el-option
             v-for="item in getIntDictOptions(DICT_TYPE.SYSTEM_DATA_SCOPE)"
             :key="item.value"
-            :label="item.label"
+            :label="t('commonDataScope.' + item.value)"
             :value="item.value"
           />
         </el-select>
@@ -20,29 +20,34 @@
     </el-form>
     <el-form-item
       v-if="formData.dataScope === SystemDataScopeEnum.DEPT_CUSTOM"
-      label="部门范围"
+      :label="t('role.deptScope')"
       label-width="80px"
     >
       <el-card class="w-full h-400px !overflow-y-scroll" shadow="never">
         <template #header>
-          全选/全不选:
+          {{ t('role.selectAll') }}:
           <el-switch
             v-model="treeNodeAll"
-            active-text="是"
-            inactive-text="否"
+            :active-text="t('role.yes')"
+            :inactive-text="t('role.no')"
             inline-prompt
             @change="handleCheckedTreeNodeAll()"
           />
-          全部展开/折叠:
+          {{ t('role.expandAll') }}:
           <el-switch
             v-model="deptExpand"
-            active-text="展开"
-            inactive-text="折叠"
+            :active-text="t('role.expand')"
+            :inactive-text="t('role.collapse')"
             inline-prompt
             @change="handleCheckedTreeExpand"
           />
-          父子联动(选中父节点，自动选择子节点):
-          <el-switch v-model="checkStrictly" active-text="是" inactive-text="否" inline-prompt />
+          {{ t('role.parentChildLinkage') }}:
+          <el-switch
+            v-model="checkStrictly"
+            :active-text="t('role.yes')"
+            :inactive-text="t('role.no')"
+            inline-prompt
+          />
         </template>
         <el-tree
           ref="treeRef"
@@ -50,15 +55,17 @@
           :data="deptOptions"
           :props="defaultProps"
           default-expand-all
-          empty-text="加载中，请稍后"
+          :empty-text="t('role.loading')"
           node-key="id"
           show-checkbox
         />
       </el-card>
     </el-form-item>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>

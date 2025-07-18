@@ -7,8 +7,8 @@
       :rules="formRules"
       label-width="140px"
     >
-      <el-form-item label="短信渠道编号" prop="channelId">
-        <el-select v-model="formData.channelId" placeholder="请选择短信渠道编号">
+      <el-form-item :label="t('sms.channelId')" prop="channelId">
+        <el-select v-model="formData.channelId" :placeholder="t('sms.pleaseSelectChannel')">
           <el-option
             v-for="channel in channelList"
             :key="channel.id"
@@ -20,8 +20,8 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="短信类型" prop="type">
-        <el-select v-model="formData.type" placeholder="请选择短信类型">
+      <el-form-item :label="t('sms.templateType')" prop="type">
+        <el-select v-model="formData.type" :placeholder="t('sms.pleaseSelectTemplateType')">
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_SMS_TEMPLATE_TYPE)"
             :key="dict.value"
@@ -30,16 +30,20 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="模板编号" prop="code">
-        <el-input v-model="formData.code" placeholder="请输入模板编号" />
+      <el-form-item :label="t('sms.templateCode')" prop="code">
+        <el-input v-model="formData.code" :placeholder="t('sms.pleaseInputTemplateCode')" />
       </el-form-item>
-      <el-form-item label="模板名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入模板名称" />
+      <el-form-item :label="t('sms.templateName')" prop="name">
+        <el-input v-model="formData.name" :placeholder="t('sms.pleaseInputTemplateName')" />
       </el-form-item>
-      <el-form-item label="模板内容" prop="content">
-        <el-input v-model="formData.content" placeholder="请输入模板内容" type="textarea" />
+      <el-form-item :label="t('sms.templateContent')" prop="content">
+        <el-input
+          v-model="formData.content"
+          :placeholder="t('sms.pleaseInputTemplateContent')"
+          type="textarea"
+        />
       </el-form-item>
-      <el-form-item label="开启状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -50,16 +54,21 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="短信 API 模板编号" prop="apiTemplateId">
-        <el-input v-model="formData.apiTemplateId" placeholder="请输入短信 API 的模板编号" />
+      <el-form-item :label="t('sms.apiTemplateId')" prop="apiTemplateId">
+        <el-input
+          v-model="formData.apiTemplateId"
+          :placeholder="t('sms.pleaseInputApiTemplateId')"
+        />
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="formData.remark" placeholder="请输入备注" />
+      <el-form-item :label="t('common.remark')" prop="remark">
+        <el-input v-model="formData.remark" :placeholder="t('common.pleaseInputRemark')" />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -90,13 +99,13 @@ const formData = ref<SmsTemplateApi.SmsTemplateVO>({
   channelId: undefined
 })
 const formRules = reactive({
-  type: [{ required: true, message: '短信类型不能为空', trigger: 'change' }],
-  status: [{ required: true, message: '开启状态不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '模板编码不能为空', trigger: 'blur' }],
-  name: [{ required: true, message: '模板名称不能为空', trigger: 'blur' }],
-  content: [{ required: true, message: '模板内容不能为空', trigger: 'blur' }],
-  apiTemplateId: [{ required: true, message: '短信 API 的模板编号不能为空', trigger: 'blur' }],
-  channelId: [{ required: true, message: '短信渠道编号不能为空', trigger: 'change' }]
+  type: [{ required: true, message: t('sms.templateTypeRequired'), trigger: 'change' }],
+  status: [{ required: true, message: t('sms.statusRequired'), trigger: 'blur' }],
+  code: [{ required: true, message: t('sms.templateCodeRequired'), trigger: 'blur' }],
+  name: [{ required: true, message: t('sms.templateNameRequired'), trigger: 'blur' }],
+  content: [{ required: true, message: t('sms.templateContentRequired'), trigger: 'blur' }],
+  apiTemplateId: [{ required: true, message: t('sms.apiTemplateIdRequired'), trigger: 'blur' }],
+  channelId: [{ required: true, message: t('sms.channelIdRequired'), trigger: 'change' }]
 })
 const formRef = ref() // 表单 Ref
 const channelList = ref<SmsChannelApi.SmsChannelVO[]>([]) // 短信渠道列表

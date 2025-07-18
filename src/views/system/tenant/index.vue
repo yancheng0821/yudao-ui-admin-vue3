@@ -4,7 +4,6 @@
   <!-- 搜索 -->
   <ContentWrap>
     <el-form
-      :key="locale"
       class="-mb-15px"
       :model="queryParams"
       ref="queryFormRef"
@@ -109,12 +108,7 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table
-      :key="locale"
-      v-loading="loading"
-      :data="list"
-      @selection-change="handleRowCheckboxChange"
-    >
+    <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
       <el-table-column :label="t('tenant.id')" align="center" prop="id" />
       <el-table-column :label="t('tenant.name')" align="center" prop="name" />

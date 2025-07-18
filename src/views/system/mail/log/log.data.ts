@@ -2,17 +2,19 @@ import type { CrudSchema } from '@/hooks/web/useCrudSchemas'
 import { dateFormatter } from '@/utils/formatTime'
 import * as MailAccountApi from '@/api/system/mail/account'
 
+const { t } = useI18n() // 国际化
+
 // 邮箱账号的列表
 const accountList = await MailAccountApi.getSimpleMailAccountList()
 
 // CrudSchema：https://doc.iocoder.cn/vue3/crud-schema/
 const crudSchemas = reactive<CrudSchema[]>([
   {
-    label: '编号',
+    label: t('mail.logId'),
     field: 'id'
   },
   {
-    label: '发送时间',
+    label: t('mail.sendTime'),
     field: 'sendTime',
     formatter: dateFormatter,
     search: {
@@ -32,11 +34,11 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '接收邮箱',
+    label: t('mail.toMail'),
     field: 'toMail'
   },
   {
-    label: '用户编号',
+    label: t('mail.userId'),
     field: 'userId',
     isSearch: true,
     isTable: false,
@@ -49,7 +51,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '用户类型',
+    label: t('mail.userType'),
     field: 'userType',
     dictType: DICT_TYPE.USER_TYPE,
     dictClass: 'number',
@@ -64,21 +66,21 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '邮件标题',
+    label: t('mail.templateTitle'),
     field: 'templateTitle'
   },
   {
-    label: '邮件内容',
+    label: t('mail.templateContent'),
     field: 'templateContent',
     isTable: false
   },
   {
-    label: '邮箱参数',
+    label: t('mail.templateParams'),
     field: 'templateParams',
     isTable: false
   },
   {
-    label: '发送状态',
+    label: t('mail.sendStatus'),
     field: 'sendStatus',
     dictType: DICT_TYPE.SYSTEM_MAIL_SEND_STATUS,
     dictClass: 'string',
@@ -92,7 +94,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '邮箱账号',
+    label: t('mail.mailAccount'),
     field: 'accountId',
     isTable: false,
     search: {
@@ -111,14 +113,14 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '发送邮箱地址',
+    label: t('mail.fromMail'),
     field: 'fromMail',
     table: {
-      label: '邮箱账号'
+      label: t('mail.mailAccount')
     }
   },
   {
-    label: '模板编号',
+    label: t('mail.templateId'),
     field: 'templateId',
     isSearch: true,
     search: {
@@ -130,27 +132,27 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '模板编码',
+    label: t('mail.templateCode'),
     field: 'templateCode',
     isTable: false
   },
   {
-    label: '模版发送人名称',
+    label: t('mail.templateNickname'),
     field: 'templateNickname',
     isTable: false
   },
   {
-    label: '发送返回的消息编号',
+    label: t('mail.sendMessageId'),
     field: 'sendMessageId',
     isTable: false
   },
   {
-    label: '发送异常',
+    label: t('mail.sendException'),
     field: 'sendException',
     isTable: false
   },
   {
-    label: '创建时间',
+    label: t('common.createTime'),
     field: 'createTime',
     isTable: false,
     formatter: dateFormatter,
@@ -159,7 +161,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '操作',
+    label: t('common.action'),
     field: 'action',
     isDetail: false
   }

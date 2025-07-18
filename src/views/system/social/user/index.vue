@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="三方登录" url="https://doc.iocoder.cn/social-user/" />
+  <doc-alert :title="t('social.userTitle')" url="https://doc.iocoder.cn/social-user/" />
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -10,12 +10,12 @@
       class="-mb-15px"
       label-width="120px"
     >
-      <el-form-item label="社交平台" prop="type">
+      <el-form-item :label="t('social.socialType')" prop="type">
         <el-select
           v-model="queryParams.type"
           class="!w-240px"
           clearable
-          placeholder="请选择社交平台"
+          :placeholder="t('social.pleaseSelectType')"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_SOCIAL_TYPE)"
@@ -25,31 +25,31 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="用户昵称" prop="nickname">
+      <el-form-item :label="t('social.nickname')" prop="nickname">
         <el-input
           v-model="queryParams.nickname"
           class="!w-240px"
           clearable
-          placeholder="请输入用户昵称"
+          :placeholder="t('social.pleaseInputNickname')"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="社交 openid" prop="openid">
+      <el-form-item :label="t('social.openid')" prop="openid">
         <el-input
           v-model="queryParams.openid"
           class="!w-240px"
           clearable
-          placeholder="请输入社交 openid"
+          :placeholder="t('social.pleaseInputOpenid')"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item :label="t('common.createTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
-          end-placeholder="结束日期"
-          start-placeholder="开始日期"
+          :end-placeholder="t('common.endTimeText')"
+          :start-placeholder="t('common.startTimeText')"
           type="daterange"
           value-format="YYYY-MM-DD HH:mm:ss"
         />
@@ -57,11 +57,11 @@
       <el-form-item>
         <el-button @click="handleQuery">
           <Icon class="mr-5px" icon="ep:search" />
-          搜索
+          {{ t('common.query') }}
         </el-button>
         <el-button @click="resetQuery">
           <Icon class="mr-5px" icon="ep:refresh" />
-          重置
+          {{ t('common.reset') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -69,51 +69,58 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
-      <el-table-column align="center" label="社交平台" prop="type">
+    <el-table v-loading="loading" :data="list">
+      <el-table-column :label="t('social.socialType')" align="center" prop="type" width="120">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_SOCIAL_TYPE" :value="scope.row.type" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="社交 openid" prop="openid" />
-      <el-table-column align="center" label="用户昵称" prop="nickname" />
-      <el-table-column align="center" label="用户头像" prop="avatar">
-        <template #default="{ row }">
-          <el-image :src="row.avatar" class="h-30px w-30px" @click="imagePreview(row.avatar)" />
+      <el-table-column :label="t('social.openid')" align="center" prop="openid" width="300" />
+      <el-table-column :label="t('social.token')" align="center" prop="token" width="300" />
+      <el-table-column :label="t('social.nickname')" align="center" prop="nickname" width="100" />
+      <el-table-column :label="t('social.avatar')" align="center" prop="avatar" width="80">
+        <template #default="scope">
+          <img :src="scope.row.avatar" style="width: 40px; height: 40px" />
         </template>
       </el-table-column>
       <el-table-column
+        :label="t('common.createTime')"
         :formatter="dateFormatter"
         align="center"
-        label="创建时间"
         prop="createTime"
-        width="180px"
+        width="180"
       />
       <el-table-column
-        :formatter="dateFormatter"
+        :label="t('common.action')"
         align="center"
-        label="更新时间"
-        prop="updateTime"
-        width="180px"
-      />
-      <el-table-column align="center" fixed="right" label="操作">
+        class-name="small-padding fixed-width"
+      >
         <template #default="scope">
           <el-button
-            v-hasPermi="['system:social-user:query']"
             link
             type="primary"
-            @click="openDetail(scope.row.id)"
+            @click="openDetail(scope.row)"
+            v-hasPermi="['system:social-user:query']"
           >
-            详情
+            {{ t('common.detail') }}
+          </el-button>
+          <el-button
+            link
+            type="danger"
+            @click="handleDelete(scope.row.id)"
+            v-hasPermi="['system:social-user:delete']"
+          >
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
     <!-- 分页 -->
     <Pagination
-      v-model:limit="queryParams.pageSize"
-      v-model:page="queryParams.pageNo"
       :total="total"
+      v-model:page="queryParams.pageNo"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
   </ContentWrap>
@@ -127,9 +134,11 @@ import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import * as SocialUserApi from '@/api/system/social/user'
 import SocialUserDetail from './SocialUserDetail.vue'
-import { createImageViewer } from '@/components/ImageViewer'
 
-defineOptions({ name: 'SocialUser' })
+defineOptions({ name: 'SystemSocialUser' })
+
+const message = useMessage() // 消息弹窗
+const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
@@ -138,8 +147,8 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   type: undefined,
-  openid: undefined,
   nickname: undefined,
+  openid: undefined,
   createTime: []
 })
 const queryFormRef = ref() // 搜索的表单
@@ -168,16 +177,23 @@ const resetQuery = () => {
   handleQuery()
 }
 
-const imagePreview = (imgUrl: string) => {
-  createImageViewer({
-    urlList: [imgUrl]
-  })
-}
-
 /** 详情操作 */
 const detailRef = ref()
-const openDetail = (id: number) => {
-  detailRef.value.open(id)
+const openDetail = (data: SocialUserApi.SocialUserVO) => {
+  detailRef.value.open(data)
+}
+
+/** 删除按钮操作 */
+const handleDelete = async (id: number) => {
+  try {
+    // 删除的二次确认
+    await message.delConfirm()
+    // 发起删除
+    await SocialUserApi.deleteSocialUser(id)
+    message.success(t('common.delSuccess'))
+    // 刷新列表
+    await getList()
+  } catch {}
 }
 
 /** 初始化 **/

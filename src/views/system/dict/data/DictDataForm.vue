@@ -7,53 +7,59 @@
       :rules="formRules"
       label-width="80px"
     >
-      <el-form-item label="字典类型" prop="type">
+      <el-form-item :label="t('dict.type')" prop="type">
         <el-input
           v-model="formData.dictType"
           :disabled="typeof formData.id !== 'undefined'"
-          placeholder="请输入参数名称"
+          :placeholder="t('dict.pleaseInputType')"
         />
       </el-form-item>
-      <el-form-item label="数据标签" prop="label">
-        <el-input v-model="formData.label" placeholder="请输入数据标签" />
+      <el-form-item :label="t('dict.dataLabel')" prop="label">
+        <el-input v-model="formData.label" :placeholder="t('dict.pleaseInputLabel')" />
       </el-form-item>
-      <el-form-item label="数据键值" prop="value">
-        <el-input v-model="formData.value" placeholder="请输入数据键值" />
+      <el-form-item :label="t('dict.dataValue')" prop="value">
+        <el-input v-model="formData.value" :placeholder="t('dict.pleaseInputValue')" />
       </el-form-item>
-      <el-form-item label="显示排序" prop="sort">
+      <el-form-item :label="t('dict.sort')" prop="sort">
         <el-input-number v-model="formData.sort" :min="0" controls-position="right" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('dict.status')" prop="status">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ t('commonStatus.' + dict.value) }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="颜色类型" prop="colorType">
+      <el-form-item :label="t('dict.colorType')" prop="colorType">
         <el-select v-model="formData.colorType">
           <el-option
             v-for="item in colorTypeOptions"
             :key="item.value"
-            :label="item.label + '(' + item.value + ')'"
+            :label="t('dict.colorTypeOptions.' + item.value)"
             :value="item.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="CSS Class" prop="cssClass">
-        <el-input v-model="formData.cssClass" placeholder="请输入 CSS Class" />
+        <el-input v-model="formData.cssClass" :placeholder="t('dict.pleaseInputCssClass')" />
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="formData.remark" placeholder="请输入内容" type="textarea" />
+      <el-form-item :label="t('dict.remark')" prop="remark">
+        <el-input
+          v-model="formData.remark"
+          :placeholder="t('dict.pleaseInputRemark')"
+          type="textarea"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -80,13 +86,14 @@ const formData = ref({
   status: CommonStatusEnum.ENABLE,
   colorType: '',
   cssClass: '',
-  remark: ''
+  remark: '',
+  createTime: undefined
 })
 const formRules = reactive({
-  label: [{ required: true, message: '数据标签不能为空', trigger: 'blur' }],
-  value: [{ required: true, message: '数据键值不能为空', trigger: 'blur' }],
-  sort: [{ required: true, message: '数据顺序不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态不能为空', trigger: 'change' }]
+  label: [{ required: true, message: t('dict.labelRequired'), trigger: 'blur' }],
+  value: [{ required: true, message: t('dict.valueRequired'), trigger: 'blur' }],
+  sort: [{ required: true, message: t('dict.sortRequired'), trigger: 'blur' }],
+  status: [{ required: true, message: t('dict.statusRequired'), trigger: 'change' }]
 })
 const formRef = ref() // 表单 Ref
 
@@ -94,27 +101,27 @@ const formRef = ref() // 表单 Ref
 const colorTypeOptions = readonly([
   {
     value: 'default',
-    label: '默认'
+    label: t('dict.colorTypeOptions.default')
   },
   {
     value: 'primary',
-    label: '主要'
+    label: t('dict.colorTypeOptions.primary')
   },
   {
     value: 'success',
-    label: '成功'
+    label: t('dict.colorTypeOptions.success')
   },
   {
     value: 'info',
-    label: '信息'
+    label: t('dict.colorTypeOptions.info')
   },
   {
     value: 'warning',
-    label: '警告'
+    label: t('dict.colorTypeOptions.warning')
   },
   {
     value: 'danger',
-    label: '危险'
+    label: t('dict.colorTypeOptions.danger')
   }
 ])
 
@@ -149,7 +156,7 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    const data = formData.value as DictDataApi.DictDataVO
+    const data = formData.value as unknown as DictDataApi.DictDataVO
     if (formType.value === 'create') {
       await DictDataApi.createDictData(data)
       message.success(t('common.createSuccess'))
@@ -176,7 +183,8 @@ const resetForm = () => {
     status: CommonStatusEnum.ENABLE,
     colorType: '',
     cssClass: '',
-    remark: ''
+    remark: '',
+    createTime: undefined
   }
   formRef.value?.resetFields()
 }

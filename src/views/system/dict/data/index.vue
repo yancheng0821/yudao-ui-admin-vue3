@@ -7,7 +7,7 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="字典名称" prop="dictType">
+      <el-form-item :label="t('dict.name')" prop="dictType">
         <el-select v-model="queryParams.dictType" class="!w-240px">
           <el-option
             v-for="item in dictTypeList"
@@ -17,36 +17,45 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="字典标签" prop="label">
+      <el-form-item :label="t('dict.dataLabel')" prop="label">
         <el-input
           v-model="queryParams.label"
-          placeholder="请输入字典标签"
+          :placeholder="t('dict.pleaseInputLabel')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="数据状态" clearable class="!w-240px">
+      <el-form-item :label="t('dict.status')" prop="status">
+        <el-select
+          v-model="queryParams.status"
+          :placeholder="t('dict.status')"
+          clearable
+          class="!w-240px"
+        >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
-            :label="dict.label"
+            :label="t('commonStatus.' + dict.value)"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
           type="primary"
           plain
           @click="openForm('create')"
           v-hasPermi="['system:dict:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" /> 新增
-        </el-button>
+          <Icon icon="ep:plus" class="mr-5px" /> {{ t('common.save') }}</el-button
+        >
         <el-button
           type="success"
           plain
@@ -54,8 +63,8 @@
           :loading="exportLoading"
           v-hasPermi="['system:dict:export']"
         >
-          <Icon icon="ep:download" class="mr-5px" /> 导出
-        </el-button>
+          <Icon icon="ep:download" class="mr-5px" /> {{ t('common.export') }}</el-button
+        >
         <el-button
           type="danger"
           plain
@@ -63,8 +72,8 @@
           @click="handleDeleteBatch"
           v-hasPermi="['system:dict:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" /> 批量删除
-        </el-button>
+          <Icon icon="ep:delete" class="mr-5px" /> {{ t('common.delMessage') }}</el-button
+        >
       </el-form-item>
     </el-form>
   </ContentWrap>
@@ -73,26 +82,31 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column label="字典编码" align="center" prop="id" />
-      <el-table-column label="字典标签" align="center" prop="label" />
-      <el-table-column label="字典键值" align="center" prop="value" />
-      <el-table-column label="字典排序" align="center" prop="sort" />
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column :label="t('dict.code')" align="center" prop="id" />
+      <el-table-column :label="t('dict.dataLabel')" align="center" prop="label" />
+      <el-table-column :label="t('dict.dataValue')" align="center" prop="value" />
+      <el-table-column :label="t('dict.sort')" align="center" prop="sort" />
+      <el-table-column :label="t('dict.status')" align="center" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="颜色类型" align="center" prop="colorType" />
+      <el-table-column :label="t('dict.colorType')" align="center" prop="colorType" />
       <el-table-column label="CSS Class" align="center" prop="cssClass" />
-      <el-table-column label="备注" align="center" prop="remark" show-overflow-tooltip />
       <el-table-column
-        label="创建时间"
+        :label="t('dict.remark')"
+        align="center"
+        prop="remark"
+        show-overflow-tooltip
+      />
+      <el-table-column
+        :label="t('common.createTime')"
         align="center"
         prop="createTime"
         width="180"
         :formatter="dateFormatter"
       />
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="t('common.actions')" align="center">
         <template #default="scope">
           <el-button
             link
@@ -100,7 +114,7 @@
             @click="openForm('update', scope.row.id)"
             v-hasPermi="['system:dict:update']"
           >
-            修改
+            {{ t('common.edit') }}
           </el-button>
           <el-button
             link
@@ -108,7 +122,7 @@
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['system:dict:delete']"
           >
-            删除
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -222,7 +236,7 @@ const handleExport = async () => {
     // 发起导出
     exportLoading.value = true
     const data = await DictDataApi.exportDictData(queryParams)
-    download.excel(data, '字典数据.xls')
+    download.excel(data, t('dict.exportFileName'))
   } catch {
   } finally {
     exportLoading.value = false

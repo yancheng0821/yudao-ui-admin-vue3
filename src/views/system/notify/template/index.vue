@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="站内信配置" url="https://doc.iocoder.cn/notify/" />
+  <doc-alert :title="t('notify.title')" url="https://doc.iocoder.cn/notify/" />
 
   <!-- 搜索工作栏 -->
   <ContentWrap>
@@ -10,28 +10,28 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="模板名称" prop="name">
+      <el-form-item :label="t('notify.templateName')" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入模板名称"
+          :placeholder="t('notify.pleaseInputTitle')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="模板编号" prop="code">
+      <el-form-item :label="t('notify.templateCode')" prop="code">
         <el-input
           v-model="queryParams.code"
-          placeholder="请输入模版编码"
+          :placeholder="t('notify.pleaseInputCode')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-select
           v-model="queryParams.status"
-          placeholder="请选择开启状态"
+          :placeholder="t('notify.pleaseSelectStatus')"
           clearable
           class="!w-240px"
         >
@@ -43,27 +43,31 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item :label="t('common.createTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
           type="primary"
           plain
           @click="openForm('create')"
           v-hasPermi="['system:notify-template:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" />新增
+          <Icon icon="ep:plus" class="mr-5px" />{{ t('common.create') }}
         </el-button>
         <el-button
           type="danger"
@@ -72,7 +76,7 @@
           @click="handleDeleteBatch"
           v-hasPermi="['system:notify-template:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" />批量删除
+          <Icon icon="ep:delete" class="mr-5px" />{{ t('common.batchDelete') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -83,62 +87,54 @@
     <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
       <el-table-column
-        label="模板编码"
+        :label="t('notify.templateCode')"
         align="center"
         prop="code"
         width="120"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="模板名称"
+        :label="t('notify.templateName')"
         align="center"
         prop="name"
         width="120"
         :show-overflow-tooltip="true"
       />
-      <el-table-column label="类型" align="center" prop="type">
+      <el-table-column :label="t('notify.templateType')" align="center" prop="type">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_NOTIFY_TEMPLATE_TYPE" :value="scope.row.type" />
         </template>
       </el-table-column>
-      <el-table-column label="发送人名称" align="center" prop="nickname" />
-      <el-table-column
-        label="模板内容"
-        align="center"
-        prop="content"
-        width="200"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column label="开启状态" align="center" prop="status" width="80">
+      <el-table-column :label="t('common.status')" align="center" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column :label="t('common.remark')" align="center" prop="remark" />
       <el-table-column
-        label="创建时间"
+        :label="t('common.createTime')"
         align="center"
         prop="createTime"
         width="180"
         :formatter="dateFormatter"
       />
-      <el-table-column label="操作" align="center" width="210" fixed="right">
+      <el-table-column :label="t('common.action')" align="center" fixed="right" width="150">
         <template #default="scope">
-          <el-button
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-            v-hasPermi="['system:notify-template:update']"
-          >
-            修改
-          </el-button>
           <el-button
             link
             type="primary"
             @click="openSendForm(scope.row)"
             v-hasPermi="['system:notify-template:send-notify']"
           >
-            测试
+            {{ t('notify.test') }}
+          </el-button>
+          <el-button
+            link
+            type="primary"
+            @click="openForm('update', scope.row.id)"
+            v-hasPermi="['system:notify-template:update']"
+          >
+            {{ t('common.edit') }}
           </el-button>
           <el-button
             link
@@ -146,7 +142,7 @@
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['system:notify-template:delete']"
           >
-            删除
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -162,7 +158,8 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <NotifyTemplateForm ref="formRef" @success="getList" />
-  <!-- 表单弹窗：测试发送 -->
+
+  <!-- 表单弹窗：发送站内信 -->
   <NotifyTemplateSendForm ref="sendFormRef" />
 </template>
 <script lang="ts" setup>
@@ -172,20 +169,20 @@ import * as NotifyTemplateApi from '@/api/system/notify/template'
 import NotifyTemplateForm from './NotifyTemplateForm.vue'
 import NotifyTemplateSendForm from './NotifyTemplateSendForm.vue'
 
-defineOptions({ name: 'NotifySmsTemplate' })
+defineOptions({ name: 'SystemNotifyTemplate' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
-const loading = ref(false) // 列表的加载中
+const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
 const list = ref([]) // 列表的数据
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   name: undefined,
-  status: undefined,
   code: undefined,
+  status: undefined,
   createTime: []
 })
 const queryFormRef = ref() // 搜索的表单
@@ -236,7 +233,7 @@ const handleDelete = async (id: number) => {
 /** 批量删除按钮操作 */
 const checkedIds = ref<number[]>([])
 const handleRowCheckboxChange = (rows: NotifyTemplateApi.NotifyTemplateVO[]) => {
-  checkedIds.value = rows.map((row) => row.id!)
+  checkedIds.value = rows.map((row) => row.id)
 }
 
 const handleDeleteBatch = async () => {
@@ -251,10 +248,10 @@ const handleDeleteBatch = async () => {
   } catch {}
 }
 
-/** 发送站内信按钮 */
-const sendFormRef = ref() // 表单 Ref
+/** 发送站内信操作 */
+const sendFormRef = ref()
 const openSendForm = (row: NotifyTemplateApi.NotifyTemplateVO) => {
-  sendFormRef.value.open(row.id)
+  sendFormRef.value.open(row)
 }
 
 /** 初始化 **/

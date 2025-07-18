@@ -7,25 +7,29 @@
       :rules="formRules"
       label-width="80px"
     >
-      <el-form-item label="上级部门" prop="parentId">
+      <el-form-item :label="t('dept.parentDept')" prop="parentId">
         <el-tree-select
           v-model="formData.parentId"
           :data="deptTree"
           :props="defaultProps"
           check-strictly
           default-expand-all
-          placeholder="请选择上级部门"
+          :placeholder="t('dept.pleaseSelectParent')"
           value-key="deptId"
         />
       </el-form-item>
-      <el-form-item label="部门名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入部门名称" />
+      <el-form-item :label="t('dept.name')" prop="name">
+        <el-input v-model="formData.name" :placeholder="t('dept.pleaseInputName')" />
       </el-form-item>
-      <el-form-item label="显示排序" prop="sort">
+      <el-form-item :label="t('dept.sort')" prop="sort">
         <el-input-number v-model="formData.sort" :min="0" controls-position="right" />
       </el-form-item>
-      <el-form-item label="负责人" prop="leaderUserId">
-        <el-select v-model="formData.leaderUserId" clearable placeholder="请输入负责人">
+      <el-form-item :label="t('dept.leader')" prop="leaderUserId">
+        <el-select
+          v-model="formData.leaderUserId"
+          clearable
+          :placeholder="t('dept.pleaseInputLeader')"
+        >
           <el-option
             v-for="item in userList"
             :key="item.id"
@@ -34,26 +38,34 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="联系电话" prop="phone">
-        <el-input v-model="formData.phone" maxlength="11" placeholder="请输入联系电话" />
+      <el-form-item :label="t('dept.phone')" prop="phone">
+        <el-input
+          v-model="formData.phone"
+          maxlength="11"
+          :placeholder="t('dept.pleaseInputPhone')"
+        />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="formData.email" maxlength="50" placeholder="请输入邮箱" />
+      <el-form-item :label="t('dept.email')" prop="email">
+        <el-input
+          v-model="formData.email"
+          maxlength="50"
+          :placeholder="t('dept.pleaseInputEmail')"
+        />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="formData.status" clearable placeholder="请选择状态">
+      <el-form-item :label="t('dept.status')" prop="status">
+        <el-select v-model="formData.status" clearable :placeholder="t('dept.pleaseSelectStatus')">
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
-            :label="dict.label"
+            :label="t('commonStatus.' + dict.value)"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="submitForm">{{ t('common.confirm') }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -86,14 +98,18 @@ const formData = ref({
   status: CommonStatusEnum.ENABLE
 })
 const formRules = reactive<FormRules>({
-  parentId: [{ required: true, message: '上级部门不能为空', trigger: 'blur' }],
-  name: [{ required: true, message: '部门名称不能为空', trigger: 'blur' }],
-  sort: [{ required: true, message: '显示排序不能为空', trigger: 'blur' }],
-  email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }],
+  parentId: [{ required: true, message: t('dept.parentDeptRequired'), trigger: 'blur' }],
+  name: [{ required: true, message: t('dept.nameRequired'), trigger: 'blur' }],
+  sort: [{ required: true, message: t('dept.sortRequired'), trigger: 'blur' }],
+  email: [{ type: 'email', message: t('dept.emailFormatError'), trigger: ['blur', 'change'] }],
   phone: [
-    { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+    {
+      pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+      message: t('dept.phoneFormatError'),
+      trigger: 'blur'
+    }
   ],
-  status: [{ required: true, message: '状态不能为空', trigger: 'blur' }]
+  status: [{ required: true, message: t('dept.statusRequired'), trigger: 'blur' }]
 })
 const formRef = ref() // 表单 Ref
 const deptTree = ref() // 树形结构
@@ -167,7 +183,7 @@ const resetForm = () => {
 const getTree = async () => {
   deptTree.value = []
   const data = await DeptApi.getSimpleDeptList()
-  let dept: Tree = { id: 0, name: '顶级部门', children: [] }
+  let dept: Tree = { id: 0, name: t('dept.topDept'), children: [] }
   dept.children = handleTree(data)
   deptTree.value.push(dept)
 }

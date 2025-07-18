@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="OAuth 2.0（SSO 单点登录)" url="https://doc.iocoder.cn/oauth2/" />
+  <doc-alert :title="t('oauth2.title')" url="https://doc.iocoder.cn/oauth2/" />
 
   <!-- 搜索 -->
   <ContentWrap>
@@ -10,17 +10,22 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="应用名" prop="name">
+      <el-form-item :label="t('oauth2.clientName')" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入应用名"
+          :placeholder="t('oauth2.pleaseInputClientName')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable class="!w-240px">
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select
+          v-model="queryParams.status"
+          :placeholder="t('common.selectText')"
+          clearable
+          class="!w-240px"
+        >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
@@ -30,15 +35,19 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
           plain
           type="primary"
           @click="openForm('create')"
           v-hasPermi="['system:oauth2-client:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" /> 新增
+          <Icon icon="ep:plus" class="mr-5px" /> {{ t('common.create') }}
         </el-button>
         <el-button
           plain
@@ -47,7 +56,7 @@
           @click="handleDeleteBatch"
           v-hasPermi="['system:oauth2-client:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" /> 批量删除
+          <Icon icon="ep:delete" class="mr-5px" /> {{ t('common.batchDelete') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -57,46 +66,27 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column label="客户端编号" align="center" prop="clientId" />
-      <el-table-column label="客户端密钥" align="center" prop="secret" />
-      <el-table-column label="应用名" align="center" prop="name" />
-      <el-table-column label="应用图标" align="center" prop="logo">
+      <el-table-column :label="t('oauth2.clientId')" align="center" prop="clientId" />
+      <el-table-column :label="t('oauth2.clientSecret')" align="center" prop="secret" />
+      <el-table-column :label="t('oauth2.clientName')" align="center" prop="name" />
+      <el-table-column :label="t('oauth2.logo')" align="center" prop="logo">
         <template #default="scope">
-          <img width="40px" height="40px" :src="scope.row.logo" />
+          <img v-if="scope.row.logo" :src="scope.row.logo" alt="logo" class="h-30px" />
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column :label="t('common.status')" align="center" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="访问令牌的有效期" align="center" prop="accessTokenValiditySeconds">
-        <template #default="scope">{{ scope.row.accessTokenValiditySeconds }} 秒</template>
-      </el-table-column>
-      <el-table-column label="刷新令牌的有效期" align="center" prop="refreshTokenValiditySeconds">
-        <template #default="scope">{{ scope.row.refreshTokenValiditySeconds }} 秒</template>
-      </el-table-column>
-      <el-table-column label="授权类型" align="center" prop="authorizedGrantTypes">
-        <template #default="scope">
-          <el-tag
-            :disable-transitions="true"
-            :key="index"
-            v-for="(authorizedGrantType, index) in scope.row.authorizedGrantTypes"
-            :index="index"
-            class="mr-5px"
-          >
-            {{ authorizedGrantType }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column
-        label="创建时间"
+        :label="t('common.createTime')"
         align="center"
         prop="createTime"
         width="180"
         :formatter="dateFormatter"
       />
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="t('common.action')" align="center" fixed="right" width="110">
         <template #default="scope">
           <el-button
             link
@@ -104,7 +94,7 @@
             @click="openForm('update', scope.row.id)"
             v-hasPermi="['system:oauth2-client:update']"
           >
-            编辑
+            {{ t('common.edit') }}
           </el-button>
           <el-button
             link
@@ -112,7 +102,7 @@
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['system:oauth2-client:delete']"
           >
-            删除
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -132,7 +122,7 @@
 <script lang="ts" setup>
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
-import * as ClientApi from '@/api/system/oauth2/client'
+import * as OAuth2ClientApi from '@/api/system/oauth2/client'
 import ClientForm from './ClientForm.vue'
 
 defineOptions({ name: 'SystemOAuth2Client' })
@@ -146,7 +136,7 @@ const list = ref([]) // 列表的数据
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  name: null,
+  name: undefined,
   status: undefined
 })
 const queryFormRef = ref() // 搜索的表单
@@ -155,7 +145,7 @@ const queryFormRef = ref() // 搜索的表单
 const getList = async () => {
   loading.value = true
   try {
-    const data = await ClientApi.getOAuth2ClientPage(queryParams)
+    const data = await OAuth2ClientApi.getOAuth2ClientPage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
@@ -187,7 +177,7 @@ const handleDelete = async (id: number) => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起删除
-    await ClientApi.deleteOAuth2Client(id)
+    await OAuth2ClientApi.deleteOAuth2Client(id)
     message.success(t('common.delSuccess'))
     // 刷新列表
     await getList()
@@ -196,7 +186,7 @@ const handleDelete = async (id: number) => {
 
 /** 批量删除按钮操作 */
 const checkedIds = ref<number[]>([])
-const handleRowCheckboxChange = (rows: ClientApi.OAuth2ClientVO[]) => {
+const handleRowCheckboxChange = (rows: OAuth2ClientApi.OAuth2ClientVO[]) => {
   checkedIds.value = rows.map((row) => row.id)
 }
 
@@ -205,7 +195,7 @@ const handleDeleteBatch = async () => {
     // 删除的二次确认
     await message.delConfirm()
     // 发起批量删除
-    await ClientApi.deleteOAuth2ClientList(checkedIds.value)
+    await OAuth2ClientApi.deleteOAuth2ClientList(checkedIds.value)
     message.success(t('common.delSuccess'))
     // 刷新列表
     await getList()

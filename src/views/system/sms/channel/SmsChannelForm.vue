@@ -7,11 +7,15 @@
       :rules="formRules"
       label-width="130px"
     >
-      <el-form-item label="短信签名" prop="signature">
-        <el-input v-model="formData.signature" placeholder="请输入短信签名" />
+      <el-form-item :label="t('sms.signature')" prop="signature">
+        <el-input v-model="formData.signature" :placeholder="t('sms.pleaseInputSignature')" />
       </el-form-item>
-      <el-form-item label="渠道编码" prop="code">
-        <el-select v-model="formData.code" clearable placeholder="请选择渠道编码">
+      <el-form-item :label="t('sms.channelCode')" prop="code">
+        <el-select
+          v-model="formData.code"
+          clearable
+          :placeholder="t('sms.pleaseSelectChannelCode')"
+        >
           <el-option
             v-for="dict in getStrDictOptions(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE)"
             :key="dict.value"
@@ -20,7 +24,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="启用状态">
+      <el-form-item :label="t('sms.enableStatus')">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -31,22 +35,24 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="formData.remark" placeholder="请输入备注" />
+      <el-form-item :label="t('common.remark')" prop="remark">
+        <el-input v-model="formData.remark" :placeholder="t('common.pleaseInputRemark')" />
       </el-form-item>
-      <el-form-item label="短信 API 的账号" prop="apiKey">
-        <el-input v-model="formData.apiKey" placeholder="请输入短信 API 的账号" />
+      <el-form-item :label="t('sms.apiKey')" prop="apiKey">
+        <el-input v-model="formData.apiKey" :placeholder="t('sms.pleaseInputApiKey')" />
       </el-form-item>
-      <el-form-item label="短信 API 的密钥" prop="apiSecret">
-        <el-input v-model="formData.apiSecret" placeholder="请输入短信 API 的密钥" />
+      <el-form-item :label="t('sms.apiSecret')" prop="apiSecret">
+        <el-input v-model="formData.apiSecret" :placeholder="t('sms.pleaseInputApiSecret')" />
       </el-form-item>
-      <el-form-item label="短信发送回调 URL" prop="callbackUrl">
-        <el-input v-model="formData.callbackUrl" placeholder="请输入短信发送回调 URL" />
+      <el-form-item :label="t('sms.callbackUrl')" prop="callbackUrl">
+        <el-input v-model="formData.callbackUrl" :placeholder="t('sms.pleaseInputCallbackUrl')" />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -75,10 +81,10 @@ const formData = ref({
   callbackUrl: ''
 })
 const formRules = reactive({
-  signature: [{ required: true, message: '短信签名不能为空', trigger: 'blur' }],
-  code: [{ required: true, message: '渠道编码不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '启用状态不能为空', trigger: 'blur' }],
-  apiKey: [{ required: true, message: '短信 API 的账号不能为空', trigger: 'blur' }]
+  signature: [{ required: true, message: t('sms.signatureRequired'), trigger: 'blur' }],
+  code: [{ required: true, message: t('sms.channelCodeRequired'), trigger: 'blur' }],
+  status: [{ required: true, message: t('sms.statusRequired'), trigger: 'blur' }],
+  apiKey: [{ required: true, message: t('sms.apiKeyRequired'), trigger: 'blur' }]
 })
 const formRef = ref() // 表单 Ref
 

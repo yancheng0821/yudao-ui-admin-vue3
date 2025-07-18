@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="短信配置" url="https://doc.iocoder.cn/sms/" />
+  <doc-alert :title="t('sms.channelTitle')" url="https://doc.iocoder.cn/sms/" />
 
   <ContentWrap>
     <el-form
@@ -9,19 +9,19 @@
       :inline="true"
       label-width="68px"
     >
-      <el-form-item label="短信签名" prop="signature">
+      <el-form-item :label="t('sms.signature')" prop="signature">
         <el-input
           v-model="queryParams.signature"
-          placeholder="请输入短信签名"
+          :placeholder="t('sms.pleaseInputSignature')"
           clearable
           class="!w-240px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="启用状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-select
           v-model="queryParams.status"
-          placeholder="请选择启用状态"
+          :placeholder="t('common.selectText')"
           class="!w-240px"
           clearable
         >
@@ -33,28 +33,32 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item :label="t('common.createTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
           type="primary"
           plain
           @click="openForm('create')"
           v-hasPermi="['system:sms-channel:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" /> 新增</el-button
-        >
+          <Icon icon="ep:plus" class="mr-5px" /> {{ t('common.create') }}
+        </el-button>
         <el-button
           type="danger"
           plain
@@ -62,8 +66,8 @@
           @click="handleDeleteBatch"
           v-hasPermi="['system:sms-channel:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" /> 批量删除</el-button
-        >
+          <Icon icon="ep:delete" class="mr-5px" /> {{ t('common.batchDelete') }}
+        </el-button>
       </el-form-item>
     </el-form>
   </ContentWrap>
@@ -72,48 +76,23 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="短信签名" align="center" prop="signature" />
-      <el-table-column label="渠道编码" align="center" prop="code">
-        <template #default="scope">
-          <dict-tag :type="DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE" :value="scope.row.code" />
-        </template>
-      </el-table-column>
-      <el-table-column label="启用状态" align="center" prop="status">
+      <el-table-column :label="t('sms.channelCode')" align="center" prop="code" />
+      <el-table-column :label="t('sms.signature')" align="center" prop="signature" />
+      <el-table-column :label="t('common.status')" align="center" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.remark')" align="center" prop="remark" />
+      <el-table-column :label="t('sms.apiKey')" align="center" prop="apiKey" />
       <el-table-column
-        label="短信 API 的账号"
-        align="center"
-        prop="apiKey"
-        :show-overflow-tooltip="true"
-        width="180"
-      />
-      <el-table-column
-        label="短信 API 的密钥"
-        align="center"
-        prop="apiSecret"
-        :show-overflow-tooltip="true"
-        width="180"
-      />
-      <el-table-column
-        label="短信发送回调 URL"
-        align="center"
-        prop="callbackUrl"
-        :show-overflow-tooltip="true"
-        width="180"
-      />
-      <el-table-column
-        label="创建时间"
+        :label="t('common.createTime')"
         align="center"
         prop="createTime"
         width="180"
         :formatter="dateFormatter"
       />
-      <el-table-column label="操作" align="center">
+      <el-table-column :label="t('common.action')" align="center" fixed="right" width="110">
         <template #default="scope">
           <el-button
             link
@@ -121,7 +100,7 @@
             @click="openForm('update', scope.row.id)"
             v-hasPermi="['system:sms-channel:update']"
           >
-            编辑
+            {{ t('common.edit') }}
           </el-button>
           <el-button
             link
@@ -129,7 +108,7 @@
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['system:sms-channel:delete']"
           >
-            删除
+            {{ t('common.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -154,13 +133,12 @@ import SmsChannelForm from './SmsChannelForm.vue'
 
 defineOptions({ name: 'SystemSmsChannel' })
 
-const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
+const { t } = useI18n() // 国际化
 
-const loading = ref(false) // 列表的加载中
+const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
 const list = ref([]) // 列表的数据
-const queryFormRef = ref() // 搜索的表单
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -168,6 +146,7 @@ const queryParams = reactive({
   status: undefined,
   createTime: []
 })
+const queryFormRef = ref() // 搜索的表单
 
 /** 查询列表 */
 const getList = async () => {

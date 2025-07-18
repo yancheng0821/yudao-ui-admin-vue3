@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="短信配置" url="https://doc.iocoder.cn/sms/" />
+  <doc-alert :title="t('sms.logTitle')" url="https://doc.iocoder.cn/sms/" />
 
   <ContentWrap>
     <!-- 搜索工作栏 -->
@@ -10,19 +10,19 @@
       :inline="true"
       label-width="100px"
     >
-      <el-form-item label="手机号" prop="mobile">
+      <el-form-item :label="t('sms.mobile')" prop="mobile">
         <el-input
           v-model="queryParams.mobile"
-          placeholder="请输入手机号"
+          :placeholder="t('sms.pleaseInputMobile')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="短信渠道" prop="channelId">
+      <el-form-item :label="t('sms.channel')" prop="channelId">
         <el-select
           v-model="queryParams.channelId"
-          placeholder="请选择短信渠道"
+          :placeholder="t('sms.pleaseSelectChannel')"
           clearable
           class="!w-240px"
         >
@@ -37,19 +37,19 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="模板编号" prop="templateId">
+      <el-form-item :label="t('sms.templateId')" prop="templateId">
         <el-input
           v-model="queryParams.templateId"
-          placeholder="请输入模板编号"
+          :placeholder="t('sms.pleaseInputTemplateId')"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="发送状态" prop="sendStatus">
+      <el-form-item :label="t('sms.sendStatus')" prop="sendStatus">
         <el-select
           v-model="queryParams.sendStatus"
-          placeholder="请选择发送状态"
+          :placeholder="t('sms.pleaseSelectSendStatus')"
           clearable
           class="!w-240px"
         >
@@ -61,20 +61,21 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="发送时间" prop="sendTime">
+      <el-form-item :label="t('sms.sendTime')" prop="sendTime">
         <el-date-picker
           v-model="queryParams.sendTime"
           value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
+          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="接收状态" prop="receiveStatus">
+      <el-form-item :label="t('sms.receiveStatus')" prop="receiveStatus">
         <el-select
           v-model="queryParams.receiveStatus"
-          placeholder="请选择接收状态"
+          :placeholder="t('sms.pleaseSelectReceiveStatus')"
           clearable
           class="!w-240px"
         >
@@ -86,27 +87,32 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="接收时间" prop="receiveTime">
+      <el-form-item :label="t('sms.receiveTime')" prop="receiveTime">
         <el-date-picker
           v-model="queryParams.receiveTime"
           value-format="YYYY-MM-DD HH:mm:ss"
           type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('common.startTimeText')"
+          :end-placeholder="t('common.endTimeText')"
+          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button @click="handleQuery"
+          ><Icon icon="ep:search" class="mr-5px" /> {{ t('common.query') }}</el-button
+        >
+        <el-button @click="resetQuery"
+          ><Icon icon="ep:refresh" class="mr-5px" /> {{ t('common.reset') }}</el-button
+        >
         <el-button
-          type="success"
           plain
+          type="info"
           @click="handleExport"
           :loading="exportLoading"
           v-hasPermi="['system:sms-log:export']"
         >
-          <Icon icon="ep:download" class="mr-5px" /> 导出
+          <Icon icon="ep:download" class="mr-5px" /> {{ t('common.export') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -114,52 +120,61 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list">
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="createTime"
-        width="180"
-        :formatter="dateFormatter"
-      />
-      <el-table-column label="手机号" align="center" prop="mobile" width="120">
+    <el-table v-loading="loading" :data="list" :show-overflow-tooltip="true" :stripe="true">
+      <el-table-column :label="t('sms.mobile')" align="center" prop="mobile" width="120" />
+      <el-table-column :label="t('sms.channel')" align="center" prop="channelId" width="120">
         <template #default="scope">
-          <div>{{ scope.row.mobile }}</div>
-          <div v-if="scope.row.userType && scope.row.userId">
-            <dict-tag :type="DICT_TYPE.USER_TYPE" :value="scope.row.userType" />
-            {{ '(' + scope.row.userId + ')' }}
-          </div>
+          <span v-for="channel in channelList" :key="channel.id">
+            <span v-if="channel.id === scope.row.channelId">
+              {{ channel.signature }}
+              【{{ getDictLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code) }}】
+            </span>
+          </span>
         </template>
       </el-table-column>
-      <el-table-column label="短信内容" align="center" prop="templateContent" width="300" />
-      <el-table-column label="发送状态" align="center" width="180">
+      <el-table-column :label="t('sms.templateId')" align="center" prop="templateId" width="80" />
+      <el-table-column
+        :label="t('sms.templateContent')"
+        align="center"
+        prop="templateContent"
+        width="300"
+      />
+      <el-table-column :label="t('sms.sendStatus')" align="center" prop="sendStatus" width="180">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_SMS_SEND_STATUS" :value="scope.row.sendStatus" />
-          <div>{{ formatDate(scope.row.sendTime) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="接收状态" align="center" width="180">
+      <el-table-column :label="t('sms.sendTime')" align="center" prop="sendTime" width="180">
+        <template #default="scope">
+          <span>{{ formatDate(scope.row.sendTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :label="t('sms.receiveStatus')"
+        align="center"
+        prop="receiveStatus"
+        width="180"
+      >
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_SMS_RECEIVE_STATUS" :value="scope.row.receiveStatus" />
-          <div>{{ formatDate(scope.row.receiveTime) }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="短信渠道" align="center" width="120">
+      <el-table-column :label="t('sms.receiveTime')" align="center" prop="receiveTime" width="180">
         <template #default="scope">
-          <div>
-            {{ channelList.find((channel) => channel.id === scope.row.channelId)?.signature }}
-          </div>
-          <dict-tag :type="DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE" :value="scope.row.channelCode" />
+          <span>{{ formatDate(scope.row.receiveTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="模板编号" align="center" prop="templateId" />
-      <el-table-column label="短信类型" align="center" prop="templateType">
+      <el-table-column :label="t('sms.templateType')" align="center" prop="templateType">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.SYSTEM_SMS_TEMPLATE_TYPE" :value="scope.row.templateType" />
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" fixed="right" class-name="fixed-width">
+      <el-table-column
+        :label="t('common.action')"
+        align="center"
+        fixed="right"
+        class-name="fixed-width"
+      >
         <template #default="scope">
           <el-button
             link
@@ -167,7 +182,7 @@
             @click="openDetail(scope.row)"
             v-hasPermi="['system:sms-log:query']"
           >
-            详情
+            {{ t('common.detail') }}
           </el-button>
         </template>
       </el-table-column>
@@ -195,6 +210,7 @@ import SmsLogDetail from './SmsLogDetail.vue'
 defineOptions({ name: 'SystemSmsLog' })
 
 const message = useMessage() // 消息弹窗
+const { t } = useI18n() // 国际化
 
 const loading = ref(false) // 列表的加载中
 const total = ref(0) // 列表的总页数
@@ -246,7 +262,7 @@ const handleExport = async () => {
     // 发起导出
     exportLoading.value = true
     const data = await SmsLogApi.exportSmsLog(queryParams)
-    download.excel(data, '短信日志.xls')
+    download.excel(data, t('sms.logExportFileName'))
   } catch {
   } finally {
     exportLoading.value = false

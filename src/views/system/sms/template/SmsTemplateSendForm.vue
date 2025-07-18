@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model="dialogVisible" title="测试">
+  <Dialog v-model="dialogVisible" :title="t('sms.test')">
     <el-form
       ref="formRef"
       v-loading="formLoading"
@@ -7,32 +7,34 @@
       :rules="formRules"
       label-width="140px"
     >
-      <el-form-item label="模板内容" prop="content">
+      <el-form-item :label="t('sms.templateContent')" prop="content">
         <el-input
           v-model="formData.content"
-          placeholder="请输入模板内容"
+          :placeholder="t('sms.pleaseInputTemplateContent')"
           readonly
           type="textarea"
         />
       </el-form-item>
-      <el-form-item label="手机号" prop="mobile">
-        <el-input v-model="formData.mobile" placeholder="请输入手机号" />
+      <el-form-item :label="t('sms.mobile')" prop="mobile">
+        <el-input v-model="formData.mobile" :placeholder="t('sms.pleaseInputMobile')" />
       </el-form-item>
       <el-form-item
         v-for="param in formData.params"
         :key="param"
-        :label="'参数 {' + param + '}'"
+        :label="t('sms.paramLabel', { param })"
         :prop="'templateParams.' + param"
       >
         <el-input
           v-model="formData.templateParams[param]"
-          :placeholder="'请输入 ' + param + ' 参数'"
+          :placeholder="t('sms.pleaseInputParam', { param })"
         />
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -42,6 +44,7 @@ import * as SmsTemplateApi from '@/api/system/sms/smsTemplate'
 defineOptions({ name: 'SystemSmsTemplateSendForm' })
 
 const message = useMessage() // 消息弹窗
+const { t } = useI18n() // 国际化
 
 const dialogVisible = ref(false) // 弹窗的是否展示
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
@@ -55,8 +58,8 @@ const formData = ref({
   templateParams: new Map()
 })
 const formRules = reactive({
-  mobile: [{ required: true, message: '手机不能为空', trigger: 'blur' }],
-  templateCode: [{ required: true, message: '模版编码不能为空', trigger: 'blur' }],
+  mobile: [{ required: true, message: t('sms.mobileRequired'), trigger: 'blur' }],
+  templateCode: [{ required: true, message: t('sms.templateCodeRequired'), trigger: 'blur' }],
   templateParams: {}
 })
 const formRef = ref() // 表单 Ref
@@ -77,7 +80,11 @@ const open = async (id: number) => {
       return obj
     }, {})
     formRules.templateParams = data.params.reduce((obj, item) => {
-      obj[item] = { required: true, message: '参数 ' + item + ' 不能为空', trigger: 'blur' }
+      obj[item] = {
+        required: true,
+        message: t('sms.paramRequired', { param: item }),
+        trigger: 'blur'
+      }
       return obj
     }, {})
   } finally {
@@ -98,7 +105,7 @@ const submitForm = async () => {
     const data = formData.value as SmsTemplateApi.SendSmsReqVO
     const logId = await SmsTemplateApi.sendSms(data)
     if (logId) {
-      message.success('提交发送成功！发送结果，见发送日志编号：' + logId)
+      message.success(t('sms.sendSuccess', { logId }))
     }
     dialogVisible.value = false
   } finally {

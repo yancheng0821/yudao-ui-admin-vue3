@@ -3,24 +3,26 @@ import { dateFormatter } from '@/utils/formatTime'
 import { TableColumn } from '@/types/table'
 import * as MailAccountApi from '@/api/system/mail/account'
 
+const { t } = useI18n() // 国际化
+
 // 邮箱账号的列表
 const accountList = await MailAccountApi.getSimpleMailAccountList()
 
 // 表单校验
 export const rules = reactive({
-  name: [required],
-  code: [required],
-  accountId: [required],
-  label: [required],
-  content: [required],
-  params: [required],
-  status: [required]
+  name: [{ required: true, message: t('mail.templateNameRequired'), trigger: 'blur' }],
+  code: [{ required: true, message: t('mail.templateCodeRequired'), trigger: 'blur' }],
+  accountId: [{ required: true, message: t('mail.accountIdRequired'), trigger: 'change' }],
+  label: [{ required: true, message: t('mail.templateTitleRequired'), trigger: 'blur' }],
+  content: [{ required: true, message: t('mail.templateContentRequired'), trigger: 'blur' }],
+  params: [{ required: true, message: t('mail.templateParamsRequired'), trigger: 'blur' }],
+  status: [{ required: true, message: t('mail.statusRequired'), trigger: 'change' }]
 })
 
 // CrudSchema：https://doc.iocoder.cn/vue3/crud-schema/
 const crudSchemas = reactive<CrudSchema[]>([
   {
-    label: '模板编码',
+    label: t('mail.templateCode'),
     field: 'code',
     isSearch: true,
     search: {
@@ -32,7 +34,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '模板名称',
+    label: t('mail.templateName'),
     field: 'name',
     isSearch: true,
     search: {
@@ -44,11 +46,11 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '模板标题',
+    label: t('mail.templateTitle'),
     field: 'title'
   },
   {
-    label: '模板内容',
+    label: t('mail.templateContent'),
     field: 'content',
     form: {
       component: 'Editor',
@@ -59,7 +61,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '邮箱账号',
+    label: t('mail.mailAccount'),
     field: 'accountId',
     width: '200px',
     formatter: (_: Recordable, __: TableColumn, cellValue: number) => {
@@ -91,11 +93,11 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '发送人名称',
+    label: t('mail.senderName'),
     field: 'nickname'
   },
   {
-    label: '开启状态',
+    label: t('mail.enableStatus'),
     field: 'status',
     isSearch: true,
     dictType: DICT_TYPE.COMMON_STATUS,
@@ -109,12 +111,12 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '备注',
+    label: t('common.remark'),
     field: 'remark',
     isTable: false
   },
   {
-    label: '创建时间',
+    label: t('common.createTime'),
     field: 'createTime',
     isForm: false,
     formatter: dateFormatter,
@@ -132,7 +134,7 @@ const crudSchemas = reactive<CrudSchema[]>([
     }
   },
   {
-    label: '操作',
+    label: t('common.action'),
     field: 'action',
     isForm: false
   }

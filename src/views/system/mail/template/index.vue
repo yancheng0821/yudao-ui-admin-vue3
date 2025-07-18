@@ -1,5 +1,5 @@
 <template>
-  <doc-alert title="邮件配置" url="https://doc.iocoder.cn/mail" />
+  <doc-alert :title="t('mail.templateConfig')" url="https://doc.iocoder.cn/mail" />
 
   <!-- 搜索工作栏 -->
   <ContentWrap>
@@ -12,7 +12,7 @@
           @click="openForm('create')"
           v-hasPermi="['system:mail-template:create']"
         >
-          <Icon icon="ep:plus" class="mr-5px" /> 新增
+          <Icon icon="ep:plus" class="mr-5px" /> {{ t('common.create') }}
         </el-button>
         <el-button
           type="danger"
@@ -21,7 +21,7 @@
           :disabled="!isSelected"
           v-hasPermi="['system:mail-template:delete']"
         >
-          <Icon icon="ep:delete" class="mr-5px" /> 批量删除
+          <Icon icon="ep:delete" class="mr-5px" /> {{ t('common.batchDelete') }}
         </el-button>
       </template>
     </Search>
@@ -47,7 +47,7 @@
           @click="openSendForm(row.id)"
           v-hasPermi="['system:mail-template:send-mail']"
         >
-          测试
+          {{ t('mail.test') }}
         </el-button>
         <el-button
           link
@@ -55,7 +55,7 @@
           @click="openForm('update', row.id)"
           v-hasPermi="['system:mail-template:update']"
         >
-          编辑
+          {{ t('common.edit') }}
         </el-button>
         <el-button
           link
@@ -63,7 +63,7 @@
           v-hasPermi="['system:mail-template:delete']"
           @click="handleDelete(row.id)"
         >
-          删除
+          {{ t('common.delete') }}
         </el-button>
       </template>
     </Table>
@@ -82,6 +82,8 @@ import MailTemplateForm from './MailTemplateForm.vue'
 import MailTemplateSendForm from './MailTemplateSendForm.vue'
 
 defineOptions({ name: 'SystemMailTemplate' })
+
+const { t } = useI18n() // 国际化
 
 // tableObject：表格的属性对象，可获得分页大小、条数等属性
 // tableMethods：表格的操作对象，可进行获得分页、删除记录等操作
@@ -111,7 +113,7 @@ const isSelected = computed(() => {
 
 /** 批量删除按钮操作 */
 const handleDeleteBatch = async () => {
-  const ids = tableObject.selections.map(item => item.id)
+  const ids = tableObject.selections.map((item) => item.id)
   if (ids.length === 0) return
   await MailTemplateApi.deleteMailTemplateList(ids)
   tableMethods.getList()

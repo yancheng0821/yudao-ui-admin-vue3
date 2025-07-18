@@ -7,10 +7,10 @@
       :rules="formRules"
       label-width="120px"
     >
-      <el-form-item label="应用名" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入应用名" />
+      <el-form-item :label="t('social.appName')" prop="name">
+        <el-input v-model="formData.name" :placeholder="t('social.pleaseInputAppName')" />
       </el-form-item>
-      <el-form-item label="社交平台" prop="socialType">
+      <el-form-item :label="t('social.socialType')" prop="socialType">
         <el-radio-group v-model="formData.socialType">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_SOCIAL_TYPE)"
@@ -21,7 +21,7 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="用户类型" prop="userType">
+      <el-form-item :label="t('social.userType')" prop="userType">
         <el-radio-group v-model="formData.userType">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.USER_TYPE)"
@@ -32,19 +32,19 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="客户端编号" prop="clientId">
-        <el-input v-model="formData.clientId" placeholder="请输入客户端编号,对应各平台的appKey" />
+      <el-form-item :label="t('social.clientId')" prop="clientId">
+        <el-input v-model="formData.clientId" :placeholder="t('social.pleaseInputClientIdDesc')" />
       </el-form-item>
-      <el-form-item label="客户端密钥" prop="clientSecret">
+      <el-form-item :label="t('social.clientSecret')" prop="clientSecret">
         <el-input
           v-model="formData.clientSecret"
-          placeholder="请输入客户端密钥,对应各平台的appSecret"
+          :placeholder="t('social.pleaseInputClientSecretDesc')"
         />
       </el-form-item>
-      <el-form-item label="agentId" prop="agentId" v-if="formData!.socialType === 30">
-        <el-input v-model="formData.agentId" placeholder="授权方的网页应用 ID，有则填" />
+      <el-form-item :label="t('social.agentId')" prop="agentId" v-if="formData!.socialType === 30">
+        <el-input v-model="formData.agentId" :placeholder="t('social.pleaseInputAgentId')" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('common.status')" prop="status">
         <el-radio-group v-model="formData.status">
           <el-radio
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
@@ -57,8 +57,10 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading" type="primary" @click="submitForm">{{
+        t('common.confirm')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -84,12 +86,12 @@ const formData = ref({
   status: 0
 })
 const formRules = reactive({
-  name: [{ required: true, message: '应用名不能为空', trigger: 'blur' }],
-  socialType: [{ required: true, message: '社交平台不能为空', trigger: 'blur' }],
-  userType: [{ required: true, message: '用户类型不能为空', trigger: 'blur' }],
-  clientId: [{ required: true, message: '客户端编号不能为空', trigger: 'blur' }],
-  clientSecret: [{ required: true, message: '客户端密钥不能为空', trigger: 'blur' }],
-  status: [{ required: true, message: '状态不能为空', trigger: 'blur' }]
+  name: [{ required: true, message: t('social.appNameRequired'), trigger: 'blur' }],
+  socialType: [{ required: true, message: t('social.socialTypeRequired'), trigger: 'blur' }],
+  userType: [{ required: true, message: t('social.userTypeRequired'), trigger: 'blur' }],
+  clientId: [{ required: true, message: t('social.clientIdRequired'), trigger: 'blur' }],
+  clientSecret: [{ required: true, message: t('social.clientSecretRequired'), trigger: 'blur' }],
+  status: [{ required: true, message: t('social.statusRequired'), trigger: 'blur' }]
 })
 const formRef = ref() // 表单 Ref
 

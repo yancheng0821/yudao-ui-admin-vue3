@@ -8,46 +8,46 @@
       class="-mb-15px"
       label-width="68px"
     >
-      <el-form-item label="字典名称" prop="name">
+      <el-form-item :label="t('dict.name')" prop="name">
         <el-input
           v-model="queryParams.name"
           class="!w-240px"
           clearable
-          placeholder="请输入字典名称"
+          :placeholder="t('dict.pleaseInput') + t('dict.name')"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="字典类型" prop="type">
+      <el-form-item :label="t('dict.type')" prop="type">
         <el-input
           v-model="queryParams.type"
           class="!w-240px"
           clearable
-          placeholder="请输入字典类型"
+          :placeholder="t('dict.pleaseInput') + t('dict.type')"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item :label="t('dict.status')" prop="status">
         <el-select
           v-model="queryParams.status"
           class="!w-240px"
           clearable
-          placeholder="请选择字典状态"
+          :placeholder="t('dict.pleaseSelect') + t('dict.status')"
         >
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
-            :label="dict.label"
+            :label="t('commonStatus.' + dict.value)"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
+      <el-form-item :label="t('dict.createTime')" prop="createTime">
         <el-date-picker
           v-model="queryParams.createTime"
           :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
           class="!w-240px"
-          end-placeholder="结束日期"
-          start-placeholder="开始日期"
+          :end-placeholder="t('dict.endDate')"
+          :start-placeholder="t('dict.startDate')"
           type="daterange"
           value-format="YYYY-MM-DD HH:mm:ss"
         />
@@ -55,11 +55,11 @@
       <el-form-item>
         <el-button @click="handleQuery">
           <Icon class="mr-5px" icon="ep:search" />
-          搜索
+          {{ t('dict.search') }}
         </el-button>
         <el-button @click="resetQuery">
           <Icon class="mr-5px" icon="ep:refresh" />
-          重置
+          {{ t('dict.reset') }}
         </el-button>
         <el-button
           v-hasPermi="['system:dict:create']"
@@ -68,7 +68,7 @@
           @click="openForm('create')"
         >
           <Icon class="mr-5px" icon="ep:plus" />
-          新增
+          {{ t('dict.create') }}
         </el-button>
         <el-button
           v-hasPermi="['system:dict:export']"
@@ -78,7 +78,7 @@
           @click="handleExport"
         >
           <Icon class="mr-5px" icon="ep:download" />
-          导出
+          {{ t('dict.export') }}
         </el-button>
         <el-button
           v-hasPermi="['system:dict:delete']"
@@ -88,7 +88,7 @@
           @click="handleDeleteBatch"
         >
           <Icon class="mr-5px" icon="ep:delete" />
-          批量删除
+          {{ t('dict.batchDelete') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -98,23 +98,23 @@
   <ContentWrap>
     <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column align="center" label="字典编号" prop="id" />
-      <el-table-column align="center" label="字典名称" prop="name" show-overflow-tooltip />
-      <el-table-column align="center" label="字典类型" prop="type" width="300" />
-      <el-table-column align="center" label="状态" prop="status">
+      <el-table-column align="center" :label="t('dict.id')" prop="id" />
+      <el-table-column align="center" :label="t('dict.name')" prop="name" show-overflow-tooltip />
+      <el-table-column align="center" :label="t('dict.type')" prop="type" width="300" />
+      <el-table-column align="center" :label="t('dict.status')" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column align="center" label="备注" prop="remark" />
+      <el-table-column align="center" :label="t('dict.remark')" prop="remark" />
       <el-table-column
         :formatter="dateFormatter"
         align="center"
-        label="创建时间"
+        :label="t('dict.createTime')"
         prop="createTime"
         width="180"
       />
-      <el-table-column align="center" label="操作">
+      <el-table-column align="center" :label="t('dict.actions')">
         <template #default="scope">
           <el-button
             v-hasPermi="['system:dict:update']"
@@ -122,10 +122,10 @@
             type="primary"
             @click="openForm('update', scope.row.id)"
           >
-            修改
+            {{ t('dict.edit') }}
           </el-button>
           <router-link :to="'/dict/type/data/' + scope.row.type">
-            <el-button link type="primary">数据</el-button>
+            <el-button link type="primary">{{ t('dict.data') }}</el-button>
           </router-link>
           <el-button
             v-hasPermi="['system:dict:delete']"
@@ -133,7 +133,7 @@
             type="danger"
             @click="handleDelete(scope.row.id)"
           >
-            删除
+            {{ t('dict.delete') }}
           </el-button>
         </template>
       </el-table-column>
